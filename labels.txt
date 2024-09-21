@@ -1,0 +1,5 @@
+0 futbol
+1 basketball
+2 voleyball
+3 hockey
+4 tenis
