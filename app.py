@@ -1,3 +1,4 @@
+from keras.backend import reverse
 from keras.models import load_model  # TensorFlow is required for Keras to work
 from PIL import Image, ImageOps  # Install pillow instead of PIL
 import numpy as np
@@ -38,4 +39,10 @@ confidence_score = str(round(prediction[0][index] * 100, 2)) + "%"
 
 # Print prediction and confidence score
 print(f"La predicción favorece a {class_name[2:]} con un porcentaje de {confidence_score}\n")
+prediction.sort()
 print("Otras conincidencias:")
+pred_reverse = sorted(prediction[0], reverse=True)
+
+for i in range(len(pred_reverse)):
+    if pred_reverse[i] != prediction[0][len(prediction[0]) - 1]:
+        print(f"{class_names[i][2:]} :{pred_reverse[i] * 100}")
