@@ -34,8 +34,8 @@ data[0] = normalized_image_array
 prediction = model.predict(data)
 index = np.argmax(prediction)
 class_name = class_names[index]
-confidence_score = prediction[0][index]
+confidence_score = str(round(prediction[0][index] * 100, 2)) + "%"
 
 # Print prediction and confidence score
-print("Class:", class_name[2:], end="")
-print("Confidence Score:", confidence_score)
+print(f"La predicción favorece a {class_name[2:]} con un porcentaje de {confidence_score}\n")
+print("Otras conincidencias:")
