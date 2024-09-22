@@ -3,22 +3,38 @@ from PIL import Image, ImageOps
 import numpy as np
 import tensorflow as tf
 
+options = ["animales", "deportes", "expresiones", "lugares turisticos"]
+print("""
+> Por favor elija una de las opciones:
+ 0.  Animales
+ 1.  Deportes
+ 2.  Expresiones
+ 3.  Lugares turísticos
+      """)
+print(">> ", end="")
+opt = int(input(""))
+print()
+
+opt_select = options[opt].lower().replace(' ', '_')
+print(opt_select)
+
 # Cargar el modelo con la clase personalizada
 model = tf.keras.models.load_model(
-    "./models/deportes/keras.h5",
+    f"./models/{opt_select}/keras_model.h5",
     custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D},
     compile=False
 )
 
+
 # Cargar las etiquetas
-with open("./models/deportes/labels.txt", "r") as f:
+with open(f"./models/{opt_select}/labels.txt", "r") as f:
     class_names = f.readlines()
 
 # Crear el array con la forma correcta
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 # Cargar la imagen
-image = Image.open("images/deporte.jpg").convert("RGB")
+image = Image.open(f"images/{opt_select}.jpg").convert("RGB")
 
 # Redimensionar la imagen
 size = (224, 224)
