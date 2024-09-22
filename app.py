@@ -12,9 +12,18 @@ print("""
  3.  Lugares turísticos
       """)
 print(">> ", end="")
-opt = int(input(""))
-print()
 
+try:
+    opt = int(input(""))
+except ValueError:
+    print("Eso no es un número entero válido.")
+    exit()
+
+if not (opt  >= 0 and opt <= 3 or opt):
+    print("Opción no válida")
+    exit()
+
+print()
 opt_select = options[opt].lower().replace(' ', '_')
 print(opt_select)
 
