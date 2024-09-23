@@ -16,11 +16,11 @@ print(">> ", end="")
 try:
     opt = int(input(""))
 except ValueError:
-    print("Eso no es un número entero válido.")
+    print("Eso no es un número entero válido.\n")
     exit()
 
-if not (opt  >= 0 and opt <= 3 or opt):
-    print("Opción no válida")
+if not (opt >= 0 and opt <= 3):
+    print("Opción no válida\n")
     exit()
 
 print()
@@ -79,3 +79,5 @@ pred_indices = np.argsort(pred_probs)[::-1]  # Obtener índices ordenados de may
 for i in range(1, len(pred_indices)):  # Comenzar desde 1 para omitir la mejor predicción
     class_label = class_names[pred_indices[i]].split(' ')[1].strip()
     print(f"{class_label} : {pred_probs[pred_indices[i]] * 100:.2f}%")
+
+print()
