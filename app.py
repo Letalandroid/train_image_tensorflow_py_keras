@@ -25,7 +25,6 @@ if not (opt >= 0 and opt <= 3):
 
 print()
 opt_select = options[opt].lower().replace(' ', '_')
-print(opt_select)
 
 # Cargar el modelo con la clase personalizada
 model = tf.keras.models.load_model(
