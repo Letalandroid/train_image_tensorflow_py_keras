@@ -1,4 +1,0 @@
-0 Perros
-1 Gatos
-2 Serpiente
-3 Hamster

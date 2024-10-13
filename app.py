@@ -3,29 +3,6 @@ from PIL import Image, ImageOps
 import numpy as np
 import tensorflow as tf
 
-options = ["animales", "deportes", "expresiones", "lugares turisticos"]
-print("""
-> Por favor elija una de las opciones:
- 0.  Animales
- 1.  Deportes
- 2.  Expresiones
- 3.  Lugares turísticos
-      """)
-print(">> ", end="")
-
-try:
-    opt = int(input(""))
-except ValueError:
-    print("Eso no es un número entero válido.\n")
-    exit()
-
-if not (opt >= 0 and opt <= 3):
-    print("Opción no válida\n")
-    exit()
-
-print()
-opt_select = options[opt].lower().replace(' ', '_')
-
 # Cargar el modelo con la clase personalizada
 model = tf.keras.models.load_model(
     f"./models/{opt_select}/keras_model.h5",

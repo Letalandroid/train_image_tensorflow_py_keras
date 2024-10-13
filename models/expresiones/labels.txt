@@ -1,3 +1,0 @@
-0 Feliz
-1 Triste
-2 Molesto
