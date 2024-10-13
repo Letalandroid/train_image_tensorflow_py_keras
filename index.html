@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>Predicción de Imagen desde la Cámara</title>
+        <style>
+            video {
+                width: 300px;
+                height: 225px;
+                border: 1px solid black;
+            }
+            canvas {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Predicción de Imagen desde la Cámara</h1>
+        <select id="cameraSelect"></select>
+        <video id="video" autoplay></video>
+        <button id="snap">Tomar Foto</button>
+        <canvas id="canvas" width="224" height="224"></canvas>
+        <button id="upload">Subir Imagen</button>
+        <p id="result"></p>
+        <p id="error"></p>
+
+        <script>
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            const result = document.getElementById('result');
+            const errorText = document.getElementById('error');
+            const cameraSelect = document.getElementById('cameraSelect');
+
+            let currentStream;
+
+            async function getVideoDevices() {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                videoDevices.forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Camera ${cameraSelect.length + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+            }
+
+            async function setupCamera(deviceId) {
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop());
+                }
+
+                try {
+                    const constraints = {
+                        video: { deviceId: { exact: deviceId } }
+                    };
+                    currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = currentStream;
+                } catch (err) {
+                    errorText.innerText = "Error al acceder a la cámara: " + err.message;
+                }
+            }
+
+            cameraSelect.addEventListener('change', (event) => {
+                setupCamera(event.target.value);
+            });
+
+            getVideoDevices().then(() => {
+                if (cameraSelect.options.length > 0) {
+                    setupCamera(cameraSelect.options[0].value); // Configura la primera cámara
+                }
+            });
+
+            document.getElementById('snap').addEventListener('click', () => {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            });
+
+            document.getElementById('upload').addEventListener('click', async () => {
+                canvas.toBlob(async (blob) => {
+                    if (blob) {
+                        const formData = new FormData();
+                        formData.append("img_test", blob, 'captured_image.jpg');
+                        const response = await fetch('http://localhost:8000/get-predict', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const resultText = await response.text();
+                        result.innerText = "Predicción: " + resultText;
+                    } else {
+                        errorText.innerText = "No se pudo capturar la imagen.";
+                    }
+                }, 'image/jpeg');
+            });
+        </script>
+    </body>
+</html>

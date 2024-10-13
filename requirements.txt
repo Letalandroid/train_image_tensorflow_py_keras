@@ -2,3 +2,6 @@ tensorflow
 keras
 numpy
 pillow
+fastapi
+python-multipart
+fastapi[all]
