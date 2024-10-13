@@ -1,26 +1,69 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Predicción de Imagen desde la Cámara</title>
+        <title>Predicción de Imagen | Tienda de ropa</title>
+        <link rel="icon" type="image/x-icon" href="./images/logo.png" >
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <style>
+            * {
+                margin: 0;
+                padding: 0;
+                border: none;
+                outline: none;
+                color: #fff;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            .container {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                background-color: #0c316d;
+            }
+            .container_e {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                margin: 0 50px;
+            }
             video {
                 width: 300px;
                 height: 225px;
-                border: 1px solid black;
+                background-color: #1e65d8;
+                border-radius: 10px;
             }
             canvas {
                 display: none;
             }
+            button, select {
+                padding: 10px 20px;
+                font-size: 18px;
+                font-weight: bold;
+                background-color: #1e65d8;
+            }
+            h1 {
+                text-align: center;
+            }
+            p {
+                text-align: center;
+                margin-top: 10px;
+            }
         </style>
     </head>
     <body>
-        <h1>Predicción de Imagen desde la Cámara</h1>
-        <select id="cameraSelect"></select>
-        <video id="video" autoplay></video>
-        <button id="snap">Tomar Foto</button>
-        <canvas id="canvas" width="224" height="224"></canvas>
-        <button id="upload">Subir Imagen</button>
-        <p id="result"></p>
-        <p id="error"></p>
+        <div class="container">
+            <div class="container_e">
+                <h1>Predicción de Imagen desde la Cámara</h1>
+                <select id="cameraSelect"></select>
+                <video id="video" autoplay></video>
+                <button id="snap">📷 Tomar Foto</button>
+                <canvas id="canvas" width="224" height="224"></canvas>
+                <button id="upload">🔝 Subir Imagen</button>
+            </div>
+            <p id="result"></p>
+            <p id="error"></p>
+        </div>
 
         <script>
             const video = document.getElementById('video');
@@ -72,6 +115,7 @@
 
             document.getElementById('snap').addEventListener('click', () => {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                alert('📷 Foto');
             });
 
             document.getElementById('upload').addEventListener('click', async () => {
