@@ -24,8 +24,7 @@ app.add_middleware(
 @app.post("/get-predict")
 async def predict(img_test: UploadFile = File(...)):
     model = tf.keras.models.load_model(
-        f"./model/kera
-        s_model.h5",
+        "./model/keras_model.h5",
         custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D},
         compile=False
     )

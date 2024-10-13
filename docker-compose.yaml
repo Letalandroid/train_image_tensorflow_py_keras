@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: web/Dockerfile-web
+      dockerfile: web/Dockerfile
     ports:
       - "3000:80"
     networks:
@@ -18,6 +18,8 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
+    environment:
+      - MODULE_NAME=app
     networks:
       - app-network
 
