@@ -5,3 +5,4 @@ pillow
 fastapi
 python-multipart
 fastapi[all]
+uvicorn

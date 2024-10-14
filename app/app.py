@@ -1,64 +1,53 @@
 from DepthwiseConv2D import CustomDepthwiseConv2D
 from PIL import Image, ImageOps
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import tensorflow as tf
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Configuración de CORS
-origins = [
-    "http://localhost:3000",  # Permite solicitudes desde este origen
-]
+# CORS configuration
+origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos HTTP
-    allow_headers=["*"],  # Permite todos los encabezados
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# Load model and labels once
+model = tf.keras.models.load_model(
+    "./model/keras_model.h5",
+    custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D},
+    compile=False
+)
+
+with open("./model/labels.txt", "r") as f:
+    class_names = f.readlines()
 
 @app.post("/get-predict")
 async def predict(img_test: UploadFile = File(...)):
-    model = tf.keras.models.load_model(
-        "./model/keras_model.h5",
-        custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D},
-        compile=False
-    )
+    if img_test.content_type not in ["image/jpeg", "image/png"]:
+        raise HTTPException(status_code=400, detail="Invalid image type. Only JPEG and PNG are allowed.")
 
-    # Cargar las etiquetas
-    with open(f"./model/labels.txt", "r") as f:
-        class_names = f.readlines()
+    try:
+        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+        image = Image.open(img_test.file).convert("RGB")
+        image = ImageOps.fit(image, (224, 224), Image.LANCZOS)
+        normalized_image_array = (np.asarray(image).astype(np.float32) / 127.5) - 1
+        data[0] = normalized_image_array
 
-    # Crear el array con la forma correcta
-    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+        prediction = model.predict(data)
+        index = np.argmax(prediction)
+        class_name = class_names[index].split(' ')[1].strip()
+        confidence_score = str(round(prediction[0][index] * 100, 2)) + "%"
 
-    # Cargar la imagen
-    image = Image.open(img_test.file).convert("RGB")
+        return class_name
+        # return JSONResponse(content={"class_name": class_name, "confidence_score": confidence_score})
 
-    # Redimensionar la imagen
-    size = (224, 224)
-    image = ImageOps.fit(image, size, Image.LANCZOS)
-
-    # Convertir la imagen a un array de numpy
-    image_array = np.asarray(image)
-
-    # Normalizar la imagen
-    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-
-    # Cargar la imagen en el array
-    data[0] = normalized_image_array
-
-    print("\n[!] Esperando predicción")
-    # Predecir con el modelo
-    prediction = model.predict(data)
-    index = np.argmax(prediction)
-    class_name = class_names[index].split(' ')[1].strip()
-    confidence_score = str(round(prediction[0][index] * 100, 2)) + "%"
-
-    print(f"La predicción favorece a {class_name} con un porcentaje de {confidence_score}\n")
-
-    return class_name
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
