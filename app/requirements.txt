@@ -6,3 +6,7 @@ fastapi
 python-multipart
 fastapi[all]
 uvicorn
+sqlalchemy
+pymysql
+cryptography
+pyimgur
