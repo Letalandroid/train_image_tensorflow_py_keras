@@ -21,6 +21,21 @@ services:
     networks:
       - app-network
 
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: danistoredb
+    ports:
+      - "5000:3306"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/mysql
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  db_data:
