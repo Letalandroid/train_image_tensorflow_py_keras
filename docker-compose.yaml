@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: danistoredb
+    ports:
+      - "5000:3306"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/mysql
+      # - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
   web:
     build:
       context: .
@@ -20,18 +33,6 @@ services:
       - ./app:/app
     networks:
       - app-network
-
-  db:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: danistoredb
-    ports:
-      - "5000:3306"
-    networks:
-      - app-network
-    volumes:
-      - db_data:/var/lib/mysql
 
 networks:
   app-network:
