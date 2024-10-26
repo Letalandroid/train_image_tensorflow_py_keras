@@ -49,6 +49,21 @@
                 text-align: center;
                 margin-top: 10px;
             }
+            .container_others {
+                display: none;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+            #others {
+                width: 300px;
+                height: 0;
+                background-color: #1e65d8;
+                border-radius: 10px;
+                overflow-y: scroll;
+                transition: height 0.5s;
+            }
         </style>
     </head>
     <body>
@@ -63,6 +78,11 @@
             </div>
             <p id="result"></p>
             <p id="error"></p>
+            <div class="container_others">
+                <h2>Otras Predicciones:</h2>
+                <div id="others">
+                </div>
+            </div>
         </div>
 
         <script>
@@ -72,6 +92,8 @@
             const result = document.getElementById('result');
             const errorText = document.getElementById('error');
             const cameraSelect = document.getElementById('cameraSelect');
+            const others = document.getElementById('others');
+            const c_others = document.querySelector('.container_others');
 
             let currentStream;
 
@@ -116,6 +138,9 @@
             document.getElementById('snap').addEventListener('click', () => {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 alert('📷 Foto');
+                result.innerHTML = '';
+                c_others.style.display = 'none';
+                others.innerHTML = '';
             });
 
             document.getElementById('upload').addEventListener('click', async () => {
@@ -127,8 +152,18 @@
                             method: 'POST',
                             body: formData
                         });
-                        const resultText = await response.text();
-                        result.innerText = "Predicción: " + resultText;
+                        const resultText = await response.json();
+                        console.log(resultText);
+                        result.innerHTML = `<p><b>Predicción:</b> ${resultText.class_name} con ${resultText.confidence_score}</p>`;
+                        c_others.style.display = 'flex';
+                        others.style.height = '150px';
+                        others.innerHTML = '';
+
+                        resultText.others.map((r) => {
+                            others.innerHTML += `
+                            <p><b>${r.class_label}:</b> ${r.pred_probs.toFixed(2)}%</p>
+                        `;
+                        });
                     } else {
                         errorText.innerText = "No se pudo capturar la imagen.";
                     }
