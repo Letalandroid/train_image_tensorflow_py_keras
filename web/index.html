@@ -154,7 +154,10 @@
                         });
                         const resultText = await response.json();
                         console.log(resultText);
-                        result.innerHTML = `<p><b>Predicción:</b> ${resultText.class_name} con ${resultText.confidence_score}</p>`;
+                        result.innerHTML = `
+                            <p><b>Predicción:</b> ${resultText.class_name} con ${resultText.confidence_score}</p>
+                            <p>${resultText.link}</p>
+                        `;
                         c_others.style.display = 'flex';
                         others.style.height = '150px';
                         others.innerHTML = '';

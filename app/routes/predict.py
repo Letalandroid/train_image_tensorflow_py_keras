@@ -84,7 +84,7 @@ async def predict(img_test: UploadFile = File(...)):
                 print(f"Error occurred: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
 
-        return JSONResponse(content={"class_name": class_name, "confidence_score": confidence_score, 'others': others_predicts})
+        return JSONResponse(content={'link': data_insert["image"], "class_name": class_name, "confidence_score": confidence_score, 'others': others_predicts})
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
