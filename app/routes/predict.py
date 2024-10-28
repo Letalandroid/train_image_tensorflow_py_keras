@@ -8,10 +8,12 @@ from sklearn.metrics import classification_report
 from model.predict import predict as predict_table
 from sqlalchemy import func, select
 from config.db import engine
+from datetime import datetime
+from time import time
+from random import random
 import numpy as np
 import tensorflow as tf
 import os
-from time import time
 
 prediction_router = APIRouter()
 
@@ -42,7 +44,8 @@ async def predict(img_test: UploadFile = File(...)):
         prediction = model.predict(data)
         index = np.argmax(prediction)
         end_predict = time()
-        print(f'Tiempo de prediccion: {end_predict - start_predict:.2f} segundos')
+        time_out = end_predict - start_predict
+        print(f'Tiempo de prediccion: {time_out:.2f} segundos')
         class_name = class_names[index].split(' ')[1].strip()
         confidence_score = str(round(prediction[0][index] * 100, 2)) + "%"
 
@@ -73,9 +76,13 @@ async def predict(img_test: UploadFile = File(...)):
                 # count_result = conn.execute(count_query).scalar()  # Get the scalar result (count)
 
                 data_insert = {
+                    'fecha': datetime.now(),
+                    'porcent': confidence_score,
                     "tipo": class_name,
-                    "image": imgur.upload_image(4, class_name, 'temp_image.jpg')
+                    "image": imgur.upload_image(random() * 999, class_name, 'temp_image.jpg'),
+                    'time_calc': f'{time_out:.2f}',
                 }
+                print("Datos a insertar:", data_insert)
                 res = conn.execute(predict_table.insert().values(data_insert))
                 os.remove('temp_image.jpg')
                 conn.commit()
@@ -84,7 +91,12 @@ async def predict(img_test: UploadFile = File(...)):
                 print(f"Error occurred: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
 
-        return JSONResponse(content={'link': data_insert["image"], "class_name": class_name, "confidence_score": confidence_score, 'others': others_predicts})
+        return JSONResponse(content={
+                'link': data_insert["image"],
+                "class_name": class_name,
+                "confidence_score": confidence_score,
+                'others': others_predicts
+            })
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

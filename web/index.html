@@ -144,6 +144,9 @@
             });
 
             document.getElementById('upload').addEventListener('click', async () => {
+                result.innerHTML = '';
+                c_others.style.display = 'none';
+                others.innerHTML = '';
                 canvas.toBlob(async (blob) => {
                     if (blob) {
                         const formData = new FormData();

@@ -7,8 +7,16 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .image-container {
+            display: flex;
+            flex-direction: column;
             text-align: center;
             margin-bottom: 20px;
+            align-items: center;
+        }
+        .data {
+            width: 220px;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -32,8 +40,15 @@
                     col.className = 'col-md-4';
                     col.innerHTML = `
                         <div class="image-container">
-                            <img src="${item.image}" class="img-fluid" alt="${item.tipo}">
-                            <p>Tipo: ${item.tipo}</p>
+                            <div>
+                                <p>${item.fecha}</p>
+                                <img src="${item.image}" class="img-fluid" alt="${item.tipo}">
+                            </div>
+                            <div class="data">
+                                <span>${item.tipo}</span>
+                                <span>${item.porcent}</span>
+                                <span>${item.time_calc}</span>
+                            </div>
                         </div>
                     `;
                     gallery.appendChild(col);

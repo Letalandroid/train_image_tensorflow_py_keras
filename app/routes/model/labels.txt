@@ -1,9 +1,9 @@
-0 Botín
+0 Botin
 1 Bolsa
 2 Abrigo
 3 Vestido
-4 Suéter
+4 Sueter
 5 Sandalia
 6 Zapatilla
-7 Pantalón
+7 Pantalon
 8 Camiseta
